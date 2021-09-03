@@ -15,6 +15,7 @@ import requests
 # Description is weird <10% of the time
 # Otherwise all good
 
+## Convert print time to time logging
 
 class scraper:
 
