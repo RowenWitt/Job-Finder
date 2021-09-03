@@ -15,9 +15,6 @@ import requests
 # Description is weird <10% of the time
 # Otherwise all good
 
-# To be passed in as arguments
-root_url = 'https://www.indeed.com/jobs?q=data%20scientist&l=Los%20Angeles%2C%20CA'
-driver_path = '/usr/local/bin/chromedriver'
 
 class scraper:
 
@@ -165,15 +162,15 @@ class scraper:
         return total
 
 
-    def scrape(self, depth=5, root_url=self.root_url):
-
+    def scrape(self, depth=5):
+        """ gets 15 jobs per page, default is 5 pages of results """
         scraped = []
         
         for i in range(depth):
             if i == 0:
-                page_url = root_url
+                page_url = self.root_url
             else:
-                page_url = root_url + '%start={}'.format(i*10)
+                page_url = self.root_url + '%start={}'.format(i*10)
 
             links = self.get_links_from_link(page_url)
             page = self.get_page_info(links)
