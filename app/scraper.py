@@ -163,3 +163,20 @@ class scraper:
 
         print(time.time() - start)
         return total
+
+
+    def scrape(self, depth=5, root_url=self.root_url):
+
+        scraped = []
+        
+        for i in range(depth):
+            if i == 0:
+                page_url = root_url
+            else:
+                page_url = root_url + '%start={}'.format(i*10)
+
+            links = self.get_links_from_link(page_url)
+            page = self.get_page_info(links)
+            scraped.append(page)
+        
+        return scraped
