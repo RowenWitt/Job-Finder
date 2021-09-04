@@ -6,7 +6,9 @@ Scraper, ETL Pipeline, API for getting jobs from Indeed
 
 ## Known Defects
 
-- Currently takes about 1 minute to scrape a page on my machine, probably not good
+- Entire app structure is heavily reliant upon try/except, which is not the same thing as clean code
+
+- Currently takes about 15 seconds to scrape a page on my machine, probably not ideal
 
 - Date posted is being stored in the database as the date of scraping minus the 'days since posted' from Indeed.  After 30 days this counter just says 'more than 30 days', this means that any job older than 30 days could be any number of days older than 30.  There's probably a better way
 
@@ -15,3 +17,5 @@ Scraper, ETL Pipeline, API for getting jobs from Indeed
 - reviews sometimes doesn't show up when it should, likely due to uncommon html structure
 
 - If you want to build this into an app, you'll need a table to handle login info as well as a table relating `id` from JobListings table to a user's related actions.
+
+- Missing a fair number of links to applications, a number of possible solutions, best is probably troubleshooting the scraper

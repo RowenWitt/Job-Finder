@@ -31,6 +31,10 @@ class Pipeline:
 
 			today = date.today()
 
+
+			print(data)
+			print(len(data))
+
 			to_input = []
 			for job in data:
 				job['date'] = today
@@ -40,7 +44,7 @@ class Pipeline:
 				del job['age']
 
 				## job['app link'] != None and 
-				if job['date'] and all([(job['company'] != old.company and job['date'] != old.date) for old in old_jobs]):
+				if all([(job['company'] != old.company and job['date'] != old.date) for old in old_jobs]):
 					job['link'] = job['app link']
 					del job['app link']
 					to_input.append(job)

@@ -27,7 +27,7 @@ class scraper:
         self.options = webdriver.ChromeOptions()
         self.options.add_argument('--no-sandbox')
         self.options.add_argument('--disable-gpu')
-        #options.add_argument('--window-size=1260,1600')
+        self.options.add_argument('--window-size=1260,1600')
         self.options.add_argument('--headless')
         self.driver = webdriver.Chrome(options=self.options, executable_path=self.driver_path)
 
@@ -36,11 +36,14 @@ class scraper:
         """ Gets list of links leading to individual job posts from page of 15 job cards """
         self.driver.get(root_url)
 
-        # self.driver.implicitly_wait(3) ## Testing speed without waits
-
+        self.driver.implicitly_wait(3) ## Testing speed without waits
+        test = self.driver.find_elements_by_xpath('//div[contains(@class,"")]')
+        # for i in test:
+        #     print(i.text)
+        print(len(test))
         job_card = self.driver.find_elements_by_xpath('//div[contains(@class,"mosaic-zone")]')
-        print(job_card)
-        print(type(job_card))
+        print(len(job_card))
+
         # Fix list indexing, probably by finding where not null, then dedupe later 
         try:
             job_list = job_card[1].find_elements_by_xpath('./*[@id="mosaic-provider-jobcards"]')
@@ -68,7 +71,7 @@ class scraper:
         total = []
         for role in data:
             self.driver.get(role)
-            # self.driver.implicitly_wait(2) ## No wait will it break?
+            self.driver.implicitly_wait(2) ## No wait will it break?
 
             indiv = {}
             # Find Title
