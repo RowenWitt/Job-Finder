@@ -1,14 +1,18 @@
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv)
 
-import os
-
+import os, time, re
+from datetime import date, timedelta
 import app.scraper
 import app.db
 
 # To be passed in as arguments
 root_url = os.getenv('ROOT_URL')
 driver_path = os.getenv('DRIVER_PATH')
+
+DB = app.db.Database()
+
+logger = app.scraper.logger
 
 class Pipeline:
 
@@ -23,7 +27,32 @@ class Pipeline:
 
 		data = scraper.scrape()
 
-		clean_data = 
+		data = [job for jobs in data for job in jobs]
+
+		old_jobs = DB.get_JobListings_links()
+
+		today = date.today()
+
+		to_input = []
+		for job in data:
+
+			num = re.sub('[^0-9]', '', job['age'])
+			job['date'] = today - timedelta(int(num))
+			del job['age']
+
+			if job['app link'] != None and all([job['app link'] != old.link for old in old_jobs]):
+				job['link'] = job['app link']
+				del job['app link']
+				to_input.append(job)
+
+		logger.info('scraped {} new jobs'.format(len(to_input)))
+
+
+		### build schema dict to check against job
+
+		### inspect JobListings to get table schema and check job against schema
+
+
 
 
 

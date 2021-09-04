@@ -12,13 +12,13 @@ class JobListings(Base):
 	__tablename__ == "job_listings"
 
 	id = Column(Integer, primary_key=True, unique=True)
-	company = Column(String(64))
+	company = Column(String(128))
 	title = Column(String(128))
 	location = Column(String(128))
 	reviews = Column(String(64))
 	link = Column(String(1024))
 	date = Column(Date)
-	salary = Column()
+	salary = Column(String(128))
 	description = Column(String(10000))
 
 	def __repr__(self):

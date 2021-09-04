@@ -1,8 +1,9 @@
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
-import app.scraper
 import os
+
+import app.scraper
 
 # To be passed in as arguments
 root_url = os.getenv('ROOT_URL')

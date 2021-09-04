@@ -74,3 +74,12 @@ class Database(object):
 
 		return data
 
+
+	def get_JobListings_links(self):
+		""" SELECT link FROM job_listings """
+		with self.Sessionmaker() as session:
+			query = select(JobListings.link)
+			data = session.execute(query).fetchall()
+
+		return data
+
