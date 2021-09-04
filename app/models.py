@@ -1,5 +1,3 @@
-
-
 from sqlalchemy import Table, Column, Integer, String, Date, Float, Boolean, UniqueConstraint
 from sqlalchemy.ext.declarative import declarative_base
 from pyantic import BaseModel

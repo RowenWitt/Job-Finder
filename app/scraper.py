@@ -4,18 +4,18 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-import time
+import time, logging
 
 import pandas as pd
 from bs4 import BeautifulSoup
 import requests
 
-# Turn whole damn thing into a class
 # Salary is weird most of the time
 # Description is weird <10% of the time
 # Otherwise all good
 
-## Convert print time to time logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
 
 class scraper:
 
@@ -159,7 +159,7 @@ class scraper:
 
             total.append(indiv)
 
-        print(time.time() - start)
+        logger.info('scraped 15 jobs in {} seconds'.format((time.time() - start)))
         return total
 
 
