@@ -10,5 +10,6 @@ fastapi_utils==0.2.1
 pydantic==1.7.4
 requests==2.*
 uvicorn[standard]==0.15.0
+psycopg2-binary==2.9.1
 
 requests

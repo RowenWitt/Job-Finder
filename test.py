@@ -4,13 +4,19 @@ load_dotenv(find_dotenv())
 import os
 
 import app.scraper
+import app.pipeline
 
 # To be passed in as arguments
 root_url = os.getenv('ROOT_URL')
 driver_path = os.getenv('DRIVER_PATH')
 
-scraper = app.scraper.scraper(root_url, driver_path)
 
-data = scraper.scrape()
+pipe = app.pipeline.Pipeline(root_url, driver_path)
+
+data = pipe.get_new_jobs()
+
+# scraper = app.scraper.scraper(root_url, driver_path)
+
+# data = scraper.scrape()
 
 print(data)

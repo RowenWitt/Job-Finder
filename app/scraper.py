@@ -36,7 +36,7 @@ class scraper:
         """ Gets list of links leading to individual job posts from page of 15 job cards """
         self.driver.get(root_url)
 
-        self.driver.implicitly_wait(3)
+        # self.driver.implicitly_wait(3) ## Testing speed without waits
 
         job_card = self.driver.find_elements_by_xpath('//div[contains(@class,"mosaic-zone")]')
 
@@ -63,7 +63,7 @@ class scraper:
         total = []
         for role in data:
             self.driver.get(role)
-            self.driver.implicitly_wait(2)
+            # self.driver.implicitly_wait(2) ## No wait will it break?
 
             indiv = {}
             # Find Title

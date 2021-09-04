@@ -31,6 +31,17 @@ class Database(object):
 			)
 		)
 
+		self.JobListings_schema = {
+			'company':str,
+			'title':str,
+			'location':str,
+			'reviews':str,
+			'link':str,
+			'date':str,
+			'salary':str,
+			'description':str
+		}
+
 
 	def init_JobListings(self):
 		""" initializes JobListings table if not exists """
@@ -52,7 +63,7 @@ class Database(object):
 				data[i]['id'] = last_value
 				obj = JobListings(**data[i])
 				session.add(obj)
-				session.commit(obj)
+				session.commit()
 
 
 	def get_all_JobListings(self):
@@ -68,8 +79,8 @@ class Database(object):
 	def get_after_date_JobListings(self, date):
 		""" SELECT * FROM job_listings WHERE date > input """
 		with self.Sessionmaker() as session:
-			query = select(JobListings).
-				where(JobListings.date >= date)
+			query = (select(JobListings).
+				where(JobListings.date >= date))
 			data = session.execute(query)
 
 		return data

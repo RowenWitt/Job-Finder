@@ -1,5 +1,5 @@
 from dotenv import load_dotenv, find_dotenv
-load_dotenv(find_dotenv)
+load_dotenv(find_dotenv())
 
 import os, time, re
 from datetime import date, timedelta
@@ -7,8 +7,8 @@ import app.scraper
 import app.db
 
 # To be passed in as arguments
-root_url = os.getenv('ROOT_URL')
-driver_path = os.getenv('DRIVER_PATH')
+# root_url = os.getenv('ROOT_URL')
+# driver_path = os.getenv('DRIVER_PATH')
 
 DB = app.db.Database()
 
@@ -23,7 +23,7 @@ class Pipeline:
 
 	def get_new_jobs(self, pages=5):
 		""" runs `scraper` to get new jobs from indeed, cleans, inserts into `JobListings` """
-		scraper = app.scraper.scrape(self.root_url, self.driver_path)
+		scraper = app.scraper.scraper(self.root_url, self.driver_path)
 
 		data = scraper.scrape()
 
@@ -37,7 +37,8 @@ class Pipeline:
 		for job in data:
 
 			num = re.sub('[^0-9]', '', job['age'])
-			job['date'] = today - timedelta(int(num))
+			if num != '':
+				job['date'] = today - timedelta(int(num))
 			del job['age']
 
 			if job['app link'] != None and all([job['app link'] != old.link for old in old_jobs]):
@@ -47,16 +48,16 @@ class Pipeline:
 
 		logger.info('scraped {} new jobs'.format(len(to_input)))
 
+		print(to_input)
+
+
+		DB.insert_JobListings(to_input)
+
+
+		return to_input
+
 
 		### build schema dict to check against job
 
 		### inspect JobListings to get table schema and check job against schema
 
-
-
-
-
-
-scraper = app.scraper.scraper(root_url, driver_path)
-
-data = scraper.scrape()
