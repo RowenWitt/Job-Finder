@@ -3,15 +3,13 @@ load_dotenv(find_dotenv)
 
 import os
 
-import app.scraper
-import app.db
+import app.pipeline
 
-# To be passed in as arguments
-root_url = os.getenv('ROOT_URL')
-driver_path = os.getenv('DRIVER_PATH')
+# # To be passed in as arguments
+# root_url = os.getenv('ROOT_URL')
+# driver_path = os.getenv('DRIVER_PATH')
 
-scraper = app.scraper.scraper(root_url, driver_path)
+# scraper = app.scraper.scraper(root_url, driver_path)
 
-data = scraper.scrape()
+# data = scraper.scrape()
 
-print(data)
