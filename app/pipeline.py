@@ -6,10 +6,6 @@ from datetime import date, timedelta
 import app.scraper
 import app.db
 
-# To be passed in as arguments
-# root_url = os.getenv('ROOT_URL')
-# driver_path = os.getenv('DRIVER_PATH')
-
 DB = app.db.Database()
 
 logger = app.scraper.logger
@@ -21,40 +17,38 @@ class Pipeline:
 		self.driver_path = driver_path
 
 
-	def get_new_jobs(self, pages=5):
+	def get_new_jobs(self, pages):
 		""" runs `scraper` to get new jobs from indeed, cleans, inserts into `JobListings` """
 		scraper = app.scraper.scraper(self.root_url, self.driver_path)
 
-		data = scraper.scrape()
+		data = scraper.scrape(depth=pages)
 
-		data = [job for jobs in data for job in jobs]
+		if data is not None:
 
-		old_jobs = DB.get_JobListings_links()
+			data = [job for jobs in data for job in jobs]
 
-		today = date.today()
+			old_jobs = DB.get_JobListings_links()
 
-		to_input = []
-		for job in data:
+			today = date.today()
 
-			num = re.sub('[^0-9]', '', job['age'])
-			if num != '':
-				job['date'] = today - timedelta(int(num))
-			del job['age']
+			to_input = []
+			for job in data:
+				job['date'] = today
+				num = re.sub('[^0-9]', '', job['age'])
+				if num != '':
+					job['date'] = today - timedelta(int(num))
+				del job['age']
 
-			if job['app link'] != None and all([job['app link'] != old.link for old in old_jobs]):
-				job['link'] = job['app link']
-				del job['app link']
-				to_input.append(job)
+				## job['app link'] != None and 
+				if job['date'] and all([(job['company'] != old.company and job['date'] != old.date) for old in old_jobs]):
+					job['link'] = job['app link']
+					del job['app link']
+					to_input.append(job)
 
-		logger.info('scraped {} new jobs'.format(len(to_input)))
-
-		print(to_input)
-
-
-		DB.insert_JobListings(to_input)
+			logger.info('scraped {} new jobs'.format(len(to_input)))
 
 
-		return to_input
+			DB.insert_JobListings(to_input)
 
 
 		### build schema dict to check against job

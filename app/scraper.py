@@ -39,21 +39,26 @@ class scraper:
         # self.driver.implicitly_wait(3) ## Testing speed without waits
 
         job_card = self.driver.find_elements_by_xpath('//div[contains(@class,"mosaic-zone")]')
-
+        print(job_card)
+        print(type(job_card))
         # Fix list indexing, probably by finding where not null, then dedupe later 
-        job_list = job_card[1].find_elements_by_xpath('./*[@id="mosaic-provider-jobcards"]')
-        jobs = job_list[0].find_elements_by_xpath('./*')
+        try:
+            job_list = job_card[1].find_elements_by_xpath('./*[@id="mosaic-provider-jobcards"]')
+            jobs = job_list[0].find_elements_by_xpath('./*')
 
-
-        for job in jobs:
-            try:
-                listing = job.find_elements_by_xpath('//*[starts-with(@class, "tapItem")]')
-                links = [elem.get_attribute('href') for elem in listing]
-            except:
-                print('darn it')
-                links = ['darn it']
+            for job in jobs:
+                try:
+                    listing = job.find_elements_by_xpath('//*[starts-with(@class, "tapItem")]')
+                    links = [elem.get_attribute('href') for elem in listing]
+                except:
+                    print('darn it')
+                    links = ['darn it']
                 
-        return links
+            return links
+        except:
+            logger.info("An Error Occured")
+
+
 
 
 
@@ -163,7 +168,7 @@ class scraper:
         return total
 
 
-    def scrape(self, depth=5):
+    def scrape(self, depth):
         """ gets 15 jobs per page, default is 5 pages of results """
         scraped = []
         
@@ -174,7 +179,8 @@ class scraper:
                 page_url = self.root_url + '%start={}'.format(i*10)
 
             links = self.get_links_from_link(page_url)
-            page = self.get_page_info(links)
-            scraped.append(page)
+            if links is not None:
+                page = self.get_page_info(links)
+                scraped.append(page)
         
         return scraped
