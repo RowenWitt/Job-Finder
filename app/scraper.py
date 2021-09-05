@@ -23,20 +23,22 @@ class scraper:
 
         self.root_url = root_url
         self.driver_path = driver_path
-
+        self.user_agent = '[Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36]'
         self.options = webdriver.ChromeOptions()
         self.options.add_argument('--no-sandbox')
         self.options.add_argument('--disable-gpu')
         self.options.add_argument('--window-size=1260,1600')
         self.options.add_argument('--headless')
+        self.options.add_argument('user-agent={}'.format(self.user_agent))
         self.driver = webdriver.Chrome(options=self.options, executable_path=self.driver_path)
 
 
     def get_links_from_link(self, root_url):
         """ Gets list of links leading to individual job posts from page of 15 job cards """
         self.driver.get(root_url)
+        self.driver.save_screenshot('SCRAPE.png')
 
-        self.driver.implicitly_wait(3) ## Testing speed without waits
+        # self.driver.implicitly_wait(3) ## Testing speed without sp
         test = self.driver.find_elements_by_xpath('//div[contains(@class,"")]')
         # for i in test:
         #     print(i.text)

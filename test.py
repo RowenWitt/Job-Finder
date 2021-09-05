@@ -11,6 +11,7 @@ import app.pipeline
 #root_url = 'https://www.indeed.com/jobs?q=data%20scientist&l=Las%20Vegas%2C%20NV'
 #root_url = 'https://www.indeed.com/jobs?q=data%20scientist&l=San%20Francisco%2C%20CA'
 root_url = 'https://www.indeed.com/jobs?q=data%20scientist&l=New%20York%2C%20NY'
+#root_url = 'https://www.indeed.com/jobs?q=data%20scientist&l=Los%20Angeles%2C%20CA'
 
 driver_path = os.getenv('DRIVER_PATH')
 
