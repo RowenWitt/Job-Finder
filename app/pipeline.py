@@ -2,6 +2,7 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
 import os, time, re
+import hashlib
 from datetime import date, timedelta
 
 import app.scraper
@@ -28,7 +29,7 @@ class Pipeline:
 
 			data = [job for jobs in data for job in jobs]
 
-			old_jobs = DB.get_JobListings_links()
+			old_jobs = DB.get_JobListings_hashes()
 
 			today = date.today()
 
@@ -36,6 +37,7 @@ class Pipeline:
 			print(data)
 			print(len(data))
 
+			inputted = 0
 			to_input = []
 			for job in data:
 				job['date'] = today
@@ -44,13 +46,22 @@ class Pipeline:
 					job['date'] = today - timedelta(int(num))
 				del job['age']
 
+
+				to_hash = job['company'] + job['title']
+				to_hash = to_hash.encode()
+				h = hashlib.sha1(to_hash).hexdigest()
+				job['hashed'] = h
+
+
 				## job['app link'] != None and 
-				if all([(job['company'] != old.company and job['date'] != old.date) for old in old_jobs]):
+				if all(job['hashed'] != old.hashed for old in old_jobs):
 					job['link'] = job['app link']
 					del job['app link']
 					to_input.append(job)
+					inputted += 1
 
 			logger.info('scraped {} new jobs'.format(len(to_input)))
+			logger.info('inputted {} new jobs'.format(inputted))
 
 
 			DB.insert_JobListings(to_input)

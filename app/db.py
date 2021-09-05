@@ -86,10 +86,10 @@ class Database(object):
 		return data
 
 
-	def get_JobListings_links(self):
+	def get_JobListings_hashes(self):
 		""" SELECT link FROM job_listings """
 		with self.Sessionmaker() as session:
-			query = select(JobListings.company, JobListings.date)
+			query = select(JobListings.hashed)
 			data = session.execute(query).fetchall()
 
 		return data

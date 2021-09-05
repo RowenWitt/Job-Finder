@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, String, Date, Float, Boolean, UniqueConstraint
+from sqlalchemy import Table, Column, Integer, String, Date, Float, Boolean, Text, UniqueConstraint
 from sqlalchemy.ext.declarative import declarative_base
 from pydantic import BaseModel
 from typing import Optional, List, Dict
@@ -12,6 +12,7 @@ class JobListings(Base):
 	__tablename__ = "job_listings"
 
 	id = Column(Integer, primary_key=True, unique=True)
+	hashed = Column(String(40))
 	company = Column(String(128))
 	title = Column(String(128))
 	location = Column(String(128))
@@ -19,7 +20,7 @@ class JobListings(Base):
 	link = Column(String(4096))
 	date = Column(Date)
 	salary = Column(String(128))
-	description = Column(String(10000))
+	description = Column(Text)
 
 	def __repr__(self):
 		return (

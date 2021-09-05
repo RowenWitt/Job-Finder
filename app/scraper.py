@@ -5,10 +5,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 import time, logging
+import requests
 
 import pandas as pd
 from bs4 import BeautifulSoup
-import requests
+from random import choice
 
 from app.agents import agents
 
@@ -22,7 +23,7 @@ logger = logging.getLogger()
 class scraper:
 
     def __init__(self, root_url, driver_path):
-
+        self.agents = agents
         self.root_url = root_url
         self.driver_path = driver_path
         self.user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'
@@ -38,13 +39,18 @@ class scraper:
     def get_links_from_link(self, root_url):
         """ Gets list of links leading to individual job posts from page of 15 job cards """
         self.driver.get(root_url)
+        print(new_agent)
+        self.driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent":new_agent})
+
         self.driver.save_screenshot('SCRAPE.png')
 
         # self.driver.implicitly_wait(3) ## Testing speed without sp
+
         test = self.driver.find_elements_by_xpath('//div[contains(@class,"")]')
         # for i in test:
         #     print(i.text)
         print(len(test))
+
         job_card = self.driver.find_elements_by_xpath('//div[contains(@class,"mosaic-zone")]')
         print(len(job_card))
 
@@ -72,7 +78,7 @@ class scraper:
         total = []
         for role in data:
             self.driver.get(role)
-            self.driver.implicitly_wait(2) ## No wait will it break?
+            # self.driver.implicitly_wait(2) ## No wait will it break?
 
             indiv = {}
             # Find Title
