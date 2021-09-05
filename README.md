@@ -1,5 +1,6 @@
 # Job-Finder
 Scraper, ETL Pipeline, API for getting jobs from Indeed
+Employs rotating user agent and proxies to avoid RL
 
 - ChromeDriver version `93.0.4577.15`
 - Python version `3.9.0`
@@ -22,4 +23,4 @@ Scraper, ETL Pipeline, API for getting jobs from Indeed
 
 - DeDuplication is occuring by checking for a hashed value against a list of known hashed values, this could be improved
 
-- Captcha is a problem, user-agent shuffling has been implemented, but paying for a captcha solving service is one solution, another might be to try and build a model to solve some captchas (this would not be easy).  Proxy shuffling will be implemented
+- Captcha is a problem, user-agent shuffling has been implemented, but paying for a captcha solving service is one solution, another might be to try and build a model to solve some captchas (this would not be easy).

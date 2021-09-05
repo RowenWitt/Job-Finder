@@ -3,6 +3,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException
 
 import time, logging
 import requests
@@ -28,6 +30,10 @@ class scraper:
         self.driver_path = driver_path
         self.user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'
         self.options = webdriver.ChromeOptions()
+
+        self.options.add_experimental_option("excludeSwitches", ["enable-automation"]) # Do I need these
+        self.options.add_experimental_option("useAutomationExtension", False)  # Will this break
+
         self.options.add_argument('--no-sandbox')
         self.options.add_argument('--disable-gpu')
         self.options.add_argument('--window-size=1260,1600')
@@ -36,10 +42,41 @@ class scraper:
         self.driver = webdriver.Chrome(options=self.options, executable_path=self.driver_path)
 
 
+    def get_proxies(self):
+        """ Get proxies from https://sslproxies.org """
+        self.driver.get('https://sslproxies.org/')
+
+        self.driver.execute_script("return arguments[0].scrollIntoView(true);", WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.XPATH, "//table[@class='table table-striped table-bordered']//th[contains(., 'IP Address')]"))))
+        print('check 2')
+        ips = [my_elem.get_attribute("innerHTML") for my_elem in WebDriverWait(self.driver, 5).until(EC.visibility_of_all_elements_located((By.XPATH, "//table[@class='table table-striped table-bordered']//tbody//tr/td[position() = 1]")))] # [@role='row']
+        ports = [my_elem.get_attribute("innerHTML") for my_elem in WebDriverWait(self.driver, 5).until(EC.visibility_of_all_elements_located((By.XPATH, "//table[@class='table table-striped table-bordered']//tbody//tr/td[position() = 2]")))] # [@role='row']
+        self.driver.quit()
+        proxies = []
+        for i in range(0, len(ips)):
+            proxies.append(ips[i]+':'+ports[i])
+        print(proxies)
+        
+        for i in range(0, len(proxies)):
+            try:
+                print("Proxy selected: {}".format(proxies[i]))
+                self.options = webdriver.ChromeOptions()
+                self.options.add_argument('--proxy-server={}'.format(proxies[i]))
+                self.driver = webdriver.Chrome(options=self.options, executable_path=self.driver_path)
+                self.driver.get('https://www.whatismyip.com/proxy-check/?iref=home')
+                if "Proxy Type" in WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, "p.card-text"))):
+                    break
+            except Exception:
+                self.driver.quit()
+
+        print("Proxy Invoked")
+
+
+
+
     def get_links_from_link(self, root_url):
         """ Gets list of links leading to individual job posts from page of 15 job cards """
         self.driver.get(root_url)
-        print(new_agent)
+        new_agent = choice(agents)
         self.driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent":new_agent})
 
         self.driver.save_screenshot('SCRAPE.png')
