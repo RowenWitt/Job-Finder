@@ -36,7 +36,7 @@ class Pipeline:
 
 			print(data)
 			print(len(data))
-
+			local_hashed = []
 			inputted = 0
 			to_input = []
 			for job in data:
@@ -54,17 +54,19 @@ class Pipeline:
 
 
 				## job['app link'] != None and 
-				if all(job['hashed'] != old.hashed for old in old_jobs):
-					job['link'] = job['app link']
-					del job['app link']
-					to_input.append(job)
-					inputted += 1
+				if all(job['hashed'] != hashed for hashed in local_hashed):
+					if all(job['hashed'] != old.hashed for old in old_jobs):
+						job['link'] = job['app link']
+						del job['app link']
+						to_input.append(job)
+						inputted += 1
+						local_hashed.append(job['hashed'])
 
 			logger.info('scraped {} new jobs'.format(len(to_input)))
-			logger.info('inputted {} new jobs'.format(inputted))
-
 
 			DB.insert_JobListings(to_input)
+
+			logger.info('inputted {} new jobs'.format(inputted))
 
 
 		### build schema dict to check against job
