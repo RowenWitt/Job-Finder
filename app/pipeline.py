@@ -3,6 +3,7 @@ load_dotenv(find_dotenv())
 
 import os, time, re
 from datetime import date, timedelta
+
 import app.scraper
 import app.db
 

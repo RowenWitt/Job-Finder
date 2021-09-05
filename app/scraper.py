@@ -10,6 +10,8 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import requests
 
+from app.agents import agents
+
 # Salary is weird most of the time
 # Description is weird <10% of the time
 # Otherwise all good
@@ -23,7 +25,7 @@ class scraper:
 
         self.root_url = root_url
         self.driver_path = driver_path
-        self.user_agent = '[Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36]'
+        self.user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'
         self.options = webdriver.ChromeOptions()
         self.options.add_argument('--no-sandbox')
         self.options.add_argument('--disable-gpu')
@@ -62,9 +64,6 @@ class scraper:
             return links
         except:
             logger.info("An Error Occured")
-
-
-
 
 
     def get_page_info(self, data):
