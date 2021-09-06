@@ -118,7 +118,7 @@ class scraper:
         try:
             self.driver.get(root_url)
         except:
-            logger.info('proxy went bad for some reason')
+            logger.info('proxy went bad for some reason')  ### should make this a call to pick a new proxy
             return []
         new_agent = choice(agents)
         self.driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent":new_agent})
@@ -160,7 +160,10 @@ class scraper:
         total = []
         print('------ /n', len(data))
         for role in data:
-            self.driver.get(role)
+            try:
+                self.driver.get(role)
+            except:
+                logger.info('Error on get page, likely a timeout')
             try:
                 self.driver.save_screenshot('SCRAPE.png')
             except:
@@ -269,9 +272,11 @@ class scraper:
         """ gets 15 jobs per page, default is 5 pages of results """
         proxies = self.get_proxies()
         self.get_a_proxy(proxies, 'https://www.wikipedia.org')  # self.root_url
-
-        self.driver.get('https://www.expressvpn.com/what-is-my-ip')
-        self.driver.save_screenshot('IP.png')
+        try:
+            self.driver.get('https://www.expressvpn.com/what-is-my-ip')
+            self.driver.save_screenshot('IP.png')
+        except:
+            logger.info('failure to get ip from ip checker site, likely due to bot check')
 
         scraped = []
         
