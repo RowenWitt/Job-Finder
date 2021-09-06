@@ -16,14 +16,14 @@ root_url = 'https://www.indeed.com/jobs?q=data%20scientist&l=New%20York%2C%20NY'
 
 driver_path = os.getenv('DRIVER_PATH')
 
-s = app.scraper.scraper(root_url, driver_path)
+### Proxy Testing
+# s = app.scraper.scraper(root_url, driver_path)
 
-test = s.get_proxies()
+# test = s.get_proxies()
 
+pipe = app.pipeline.Pipeline(root_url, driver_path)
 
-# pipe = app.pipeline.Pipeline(root_url, driver_path)
-
-# pipe.get_new_jobs(pages=5)
+pipe.get_new_jobs(pages=5)
 
 
 ## Either add clicking to change location (easy)
