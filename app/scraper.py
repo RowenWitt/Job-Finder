@@ -4,7 +4,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, WebDriverException
+
+from http_request_randomizer.requests.proxy.requestProxy import RequestProxy
 
 import time, logging
 import requests
@@ -57,19 +59,15 @@ class scraper:
 
         return proxies
 
-        # for i in range(0, len(proxies)):
-        #     try:
-        #         print("Proxy selected: {}".format(proxies[i]))
-        #         self.options = webdriver.ChromeOptions()
-        #         self.options.add_argument('--proxy-server={}'.format(proxies[i]))
-        #         self.driver = webdriver.Chrome(options=self.options, executable_path=self.driver_path)
-        #         self.driver.get('https://www.whatismyip.com/proxy-check/?iref=home')
-        #         if "Proxy Type" in WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, "p.card-text"))):
-        #             break
-        #     except Exception:
-        #         self.driver.quit()
 
-        # print("Proxy Invoked")
+    def get_proxies_two(self):
+        """ Get proxies from http-request-randomizer package (magic?) """
+        req_proxy = RequestProxy()
+        proxies = req_proxy.get_proxy_list()
+        proxies = [proxy.get_address() for proxy in proxies]
+
+        return proxies
+
 
 
     def get_a_proxy(self, proxies, root_url):
@@ -78,17 +76,22 @@ class scraper:
             new_proxy = choice(proxies)
             self.options.add_argument('--proxy-server={}'.format(new_proxy))
             self.driver = webdriver.Chrome(options=self.options, executable_path=self.driver_path)
-            self.driver.set_page_load_timeout(2)
+            self.driver.set_page_load_timeout(5)
             try:
                 self.driver.get(root_url)
-                logger.info('selected a working proxy')
+                logger.info('selected working proxy {}'.format(new_proxy))
+                self.driver.set_page_load_timeout(60)
                 break
             except TimeoutException:
                 self.driver.quit()
                 del proxies[proxies.index(new_proxy)]
+                logger.info('removed 1 bad proxy from proxy_list')
             except IndexError:
                 logger.info('No more proxies to test')
                 break
+            except WebDriverException:
+                logger.info('webDriverException, source unclear, removed bad proxy')
+                del proxies[proxies.index(new_proxy)]
 
                         # new_proxy = choice(proxies)
             # try:
@@ -112,11 +115,14 @@ class scraper:
     def get_links_from_link(self, root_url):  # Switching proxy here as well wouldn't hurt
         """ Gets list of links leading to individual job posts from page of 15 job cards """
         self.driver = webdriver.Chrome(options=self.options, executable_path=self.driver_path)
-        self.driver.get(root_url)
+        try:
+            self.driver.get(root_url)
+        except:
+            logger.info('proxy went bad for some reason')
+            return []
         new_agent = choice(agents)
         self.driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent":new_agent})
 
-        self.driver.save_screenshot('SCRAPE.png')
 
         # self.driver.implicitly_wait(3) ## Testing speed without sp
 
@@ -140,26 +146,32 @@ class scraper:
                 except:
                     print('darn it')
                     links = ['darn it']
-                
+
+
+
             return links
         except:
             logger.info("An Error Occured")
 
 
-    def get_page_info(self, data, proxies):  # Probably want to switch proxy here at least
+    def get_page_info(self, data):  # Probably want to switch proxy here at least
         """ Scrapes relevant info from job posts from each page of 15 jobs """
         start = time.time()
         total = []
+        print('------ /n', len(data))
         for role in data:
-
-            self.get_a_proxy(proxies, root_url)
-
+            self.driver.get(role)
+            try:
+                self.driver.save_screenshot('SCRAPE.png')
+            except:
+                pass
             indiv = {}
             # Find Title
             tit = self.driver.find_elements_by_xpath('//div[starts-with(@class, "jobsearch-JobInfoHeader-title-container")]')
             try:
                 indiv['title'] = tit[0].text
             except:
+                print(tit)
                 indiv['title'] = 'None'
 
             # Find Company
@@ -167,6 +179,7 @@ class scraper:
 
             try:
                 comp2 = comp[0].find_elements_by_xpath('./div[*]')
+  
                 try:
                     indiv['company'] = comp2[0].text
                 except:
@@ -255,6 +268,10 @@ class scraper:
     def scrape(self, depth):
         """ gets 15 jobs per page, default is 5 pages of results """
         proxies = self.get_proxies()
+        self.get_a_proxy(proxies, 'https://www.wikipedia.org')  # self.root_url
+
+        self.driver.get('https://www.expressvpn.com/what-is-my-ip')
+        self.driver.save_screenshot('IP.png')
 
         scraped = []
         
@@ -266,7 +283,7 @@ class scraper:
 
             links = self.get_links_from_link(page_url)  # 1 call 
             if links is not None:
-                page = self.get_page_info(links, proxies) # 15 calls
+                page = self.get_page_info(links) # 15 calls
                 scraped.append(page)
         
         return scraped

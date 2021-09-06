@@ -7,7 +7,7 @@ Employs rotating user agent and proxies to avoid RL
 
 ## Known Defects
 
-- Rotating proxies is annoying because many proxies are very slow -- time to scrape one page went from ~10 seconds to ~10 minutes.  Implementing a proxy getter/checker to only use fast proxies.
+- Rotating proxies is annoying because many proxies are very slow -- time to scrape one page went from ~10 seconds to ~10 minutes.  Using minimal proxy rotation, long term solve is to pay for better proxies or run a couple proxies through AWS (I'm not willing to put the money into this).
 
 - Entire app structure is heavily reliant upon try/except, which is not the same thing as clean code
 
