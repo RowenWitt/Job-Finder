@@ -285,5 +285,9 @@ class scraper:
             if links is not None:
                 page = self.get_page_info(links) # 15 calls
                 scraped.append(page)
+
+            if i % 5 == 0:
+                proxies = self.get_proxies()
+                self.get_a_proxy(proxies, 'https://www.wikipedia.org')
         
         return scraped
