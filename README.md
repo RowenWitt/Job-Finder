@@ -7,7 +7,7 @@ Employs rotating user agent and proxies to avoid RL
 
 ## Known Defects
 
-- Rotating proxies is annoying because many proxies are very slow -- time to scrape one page went from ~10 seconds to ~10 minutes.  Using minimal proxy rotation, long term solve is to pay for better proxies or run a couple proxies through AWS (I'm not willing to put the money into this).
+- Rotating proxies is annoying because many proxies are very slow -- time to scrape one page went from ~10 seconds to ~90 seconds.  Using minimal proxy rotation, long term solve is to pay for better proxies or run a couple proxies through AWS (I'm not willing to put the money into this).
 
 - Entire app structure is heavily reliant upon try/except, which is not the same thing as clean code
 
@@ -23,6 +23,10 @@ Employs rotating user agent and proxies to avoid RL
 
 - Missing a fair number of links to applications, a number of possible solutions, best is probably troubleshooting the scraper
 
+- Scraper is making ~15x too many calls, could easily be fixed through rewrite
+
 - DeDuplication is occuring by checking for a hashed value against a list of known hashed values, this could be improved
+
+- Text is not being cleaned before DB input, had a reason for doing so but that reason is probably dumb
 
 - Captcha is a problem, user-agent shuffling has been implemented, but paying for a captcha solving service is one solution, another might be to try and build a model to solve some captchas (this would not be easy).
