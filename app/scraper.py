@@ -46,18 +46,21 @@ class scraper:
 
     def get_proxies(self):
         """ Get proxies from https://sslproxies.org """
-        self.driver.get('https://sslproxies.org/')
+        try:
+            self.driver.get('https://sslproxies.org/')
 
-        self.driver.execute_script("return arguments[0].scrollIntoView(true);", WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.XPATH, "//table[@class='table table-striped table-bordered']//th[contains(., 'IP Address')]"))))
+            self.driver.execute_script("return arguments[0].scrollIntoView(true);", WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.XPATH, "//table[@class='table table-striped table-bordered']//th[contains(., 'IP Address')]"))))
 
-        ips = [my_elem.get_attribute("innerHTML") for my_elem in WebDriverWait(self.driver, 5).until(EC.visibility_of_all_elements_located((By.XPATH, "//table[@class='table table-striped table-bordered']//tbody//tr/td[position() = 1]")))] # [@role='row']
-        ports = [my_elem.get_attribute("innerHTML") for my_elem in WebDriverWait(self.driver, 5).until(EC.visibility_of_all_elements_located((By.XPATH, "//table[@class='table table-striped table-bordered']//tbody//tr/td[position() = 2]")))] # [@role='row']
-        self.driver.quit()
-        proxies = []
-        for i in range(0, len(ips)):
-            proxies.append(ips[i]+':'+ports[i])
+            ips = [my_elem.get_attribute("innerHTML") for my_elem in WebDriverWait(self.driver, 5).until(EC.visibility_of_all_elements_located((By.XPATH, "//table[@class='table table-striped table-bordered']//tbody//tr/td[position() = 1]")))] # [@role='row']
+            ports = [my_elem.get_attribute("innerHTML") for my_elem in WebDriverWait(self.driver, 5).until(EC.visibility_of_all_elements_located((By.XPATH, "//table[@class='table table-striped table-bordered']//tbody//tr/td[position() = 2]")))] # [@role='row']
+            self.driver.quit()
+            proxies = []
+            for i in range(0, len(ips)):
+                proxies.append(ips[i]+':'+ports[i])
 
-        return proxies
+            return proxies
+        except:
+            logger.info('failed to get proxies')
 
 
     def get_proxies_two(self):
@@ -86,7 +89,7 @@ class scraper:
                 self.driver.quit()
                 del proxies[proxies.index(new_proxy)]
                 logger.info('removed 1 bad proxy from proxy_list')
-            except IndexError:
+            except (IndexError, TypeError):
                 logger.info('No more proxies to test')
                 break
             except WebDriverException:
@@ -163,7 +166,7 @@ class scraper:
             try:
                 self.driver.get(role)
             except:
-                logger.info('Error on get page, likely a timeout')
+                logger.info('Error on get individual listing page, likely a timeout')
             try:
                 self.driver.save_screenshot('SCRAPE.png')
             except:
@@ -271,6 +274,10 @@ class scraper:
     def scrape(self, depth):
         """ gets 15 jobs per page, default is 5 pages of results """
         proxies = self.get_proxies()
+        if proxies is None:
+            proxies = self.get_proxies
+
+
         self.get_a_proxy(proxies, 'https://www.wikipedia.org')  # self.root_url
         try:
             self.driver.get('https://www.expressvpn.com/what-is-my-ip')
