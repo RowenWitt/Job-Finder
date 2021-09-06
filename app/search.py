@@ -1,10 +1,29 @@
 import app.db
 
 
+import spacy
+from bs4 import BeautifulSoup
 
 
-DB = app.db.Database()
+class search:
 
+	def __init__(self):
+		self.DB = app.db.Database()
+		self.nlp = spacy.load('en_core_web_md')
+
+
+
+	def clean_strings(self):
+		""" function to clean dirty strings within the database """
+
+		print('write function 1')
+
+
+
+	def create_tokens(self):
+		""" tokenizes text and updates `tokens` column in DB """
+
+		print('write function 2')
 
 ### Function to retrain KNN model
 

@@ -299,7 +299,7 @@ class scraper:
                 scraped.append(page)
 
             if i % 5 == 0:
-                proxies = self.get_proxies()
+                # proxies = self.get_proxies()
                 self.get_a_proxy(proxies, 'https://www.wikipedia.org')
         
         return scraped
