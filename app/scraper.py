@@ -279,8 +279,8 @@ class scraper:
             if i == 0:
                 page_url = self.root_url
             else:
-                page_url = self.root_url + '%start={}'.format(i*10)
-
+                page_url = self.root_url + '&start={}'.format(i*10)
+            print(page_url)
             links = self.get_links_from_link(page_url)  # 1 call 
             if links is not None:
                 page = self.get_page_info(links) # 15 calls
