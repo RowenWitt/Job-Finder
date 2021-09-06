@@ -72,6 +72,41 @@ class scraper:
         # print("Proxy Invoked")
 
 
+    def get_a_proxy(self, proxies, root_url):
+        """ attempts to use proxies until one is found with less than 2 second page load time """
+        while True:
+            new_proxy = choice(proxies)
+            self.options.add_argument('--proxy-server={}'.format(new_proxy))
+            self.driver = webdriver.Chrome(options=self.options, executable_path=self.driver_path)
+            self.driver.set_page_load_timeout(2)
+            try:
+                self.driver.get(root_url)
+                logger.info('selected a working proxy')
+                break
+            except TimeoutException:
+                self.driver.quit()
+                del proxies[proxies.index(new_proxy)]
+            except IndexError:
+                logger.info('No more proxies to test')
+                break
+
+                        # new_proxy = choice(proxies)
+            # try:
+            #     self.driver.quit()
+            # except:
+            #     logger.info("driver error line 121 scraper.py")
+            # logger.info("using {} proxy".format(new_proxy))
+
+            # self.options.add_argument('--proxy-server={}'.format(new_proxy))
+            # self.driver = webdriver.Chrome(options=self.options, executable_path=self.driver_path)
+            # try:
+            #     self.driver.get(role)
+            # except:
+            #     new_proxy = choice(proxies)
+            #     self.options.add_argument('--proxy-server={}'.format(new_proxy))
+            #     self.driver = webdriver.Chrome(options=self.options, executable_path=self.driver_path)
+
+
 
 
     def get_links_from_link(self, root_url):  # Switching proxy here as well wouldn't hurt
@@ -88,10 +123,10 @@ class scraper:
         test = self.driver.find_elements_by_xpath('//div[contains(@class,"")]')
         # for i in test:
         #     print(i.text)
-        print(len(test))
+        print('test:', len(test))
 
         job_card = self.driver.find_elements_by_xpath('//div[contains(@class,"mosaic-zone")]')
-        print(len(job_card))
+        print('total elements:',len(job_card))
 
         # Fix list indexing, probably by finding where not null, then dedupe later 
         try:
@@ -117,21 +152,7 @@ class scraper:
         total = []
         for role in data:
 
-            new_proxy = choice(proxies)
-            try:
-                self.driver.quit()
-            except:
-                logger.info("driver error line 121 scraper.py")
-            logger.info("using {} proxy".format(new_proxy))
-            self.options.add_argument('--proxy-server={}'.format(new_proxy))
-            self.driver = webdriver.Chrome(options=self.options, executable_path=self.driver_path)
-            try:
-                self.driver.get(role)
-            except:
-                new_proxy = choice(proxies)
-                self.options.add_argument('--proxy-server={}'.format(new_proxy))
-                self.driver = webdriver.Chrome(options=self.options, executable_path=self.driver_path)
-
+            self.get_a_proxy(proxies, root_url)
 
             indiv = {}
             # Find Title
