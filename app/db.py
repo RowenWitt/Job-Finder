@@ -2,7 +2,7 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
 import json, os
-from typing import Tuple, List, Dict, String
+from typing import Tuple, List, Dict
 
 from sqlalchemy import create_engine, select, insert, update, func, inspect, and_
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -67,14 +67,14 @@ class Database(object):
 
 
 
-	def update_JobListings(self, data: List[Tuple]):
+	def update_JobListings(self, data: List[Dict]):
 		""" Updates Joblistings with data where id == id """
 		with self.Sessionmaker() as session:
 
 			for datum in data:
 				query = (
 					update(JobListings).
-					where(JobListings.id == datum[0]).
+					where(JobListings.id == datum['id']).
 					values(**datum)
 				)
 				session.execute(query)
@@ -94,7 +94,7 @@ class Database(object):
 
 
 
-	def get_after_date_JobListings(self, date: String):   # Maybe this should be a datetime?
+	def get_after_date_JobListings(self, date: str):   # Maybe this should be a datetime?
 		""" SELECT * FROM job_listings WHERE date > input """
 		with self.Sessionmaker() as session:
 			query = (

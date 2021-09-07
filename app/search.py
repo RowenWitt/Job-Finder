@@ -42,7 +42,7 @@ class search:
 		else:
 			tokens_objects = self.DB.get_new_JobListings_descriptions()
 
-		token_tuple_list = [self.tokenizer(token_id_tuple) for token_id_tuple in tokens_objects]
+		token_tuple_list = [{'id':token_id_tuple[0], 'tokens':self.tokenizer(token_id_tuple)[1]} for token_id_tuple in tokens_objects]
 
 
 		logger.info('tokenized {} strings in {} seconds'.format(len(token_tuple_list), (time.time() - start)))
