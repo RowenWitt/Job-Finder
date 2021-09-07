@@ -69,7 +69,7 @@ class Database(object):
 	def get_all_JobListings(self):
 		""" SELECT * FROM job_listings """
 		with self.Sessionmaker() as session:
-			query = select(JobListings)
+			query = (select(JobListings))
 			data = session.execute(query).fetchall()
 
 		return data
@@ -81,7 +81,7 @@ class Database(object):
 		with self.Sessionmaker() as session:
 			query = (select(JobListings).
 				where(JobListings.date >= date))
-			data = session.execute(query)
+			data = session.execute(query).fetchall()
 
 		return data
 
@@ -89,7 +89,26 @@ class Database(object):
 	def get_JobListings_hashes(self):
 		""" SELECT link FROM job_listings """
 		with self.Sessionmaker() as session:
-			query = select(JobListings.hashed)
+			query = (select(JobListings.hashed))
+			data = session.execute(query).fetchall()
+
+		return data
+
+
+	def get_all_JobListings_descriptions(self):
+		""" gets all `id`s and `descriptions` from JobListings """
+		with self.Sessionmaker() as session:
+			query = (select(JobListings.id, JobListings.description))
+			data = session.execute(query).fetchall()
+
+		return data
+
+
+	def get_new_JobListings_descriptions(self):
+		""" gets new `id`s and `descriptions` from JobListings """
+		with self.Sessionmaker() as session:
+			query = (select(JobListings.id, JobListings.description).
+				where(JobListings.tokens == None))
 			data = session.execute(query).fetchall()
 
 		return data

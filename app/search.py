@@ -1,6 +1,7 @@
 import app.db
+from app.scraper import logger
 
-
+import time
 import spacy
 from bs4 import BeautifulSoup
 
@@ -20,10 +21,36 @@ class search:
 
 
 
-	def create_tokens(self):
-		""" tokenizes text and updates `tokens` column in DB """
+	def tokenizer(self, data):
+		""" tokenizes one string, data input is a tuple of (id, text) """
+		tokens = []
+		for token in self.nlp(data[1]):
+			if (token.is_stop != True) & (token.is_punct != True) & (token.is_space != True) & (token.is_digit != True):
+				tokens.append(token.lemma_.lower())
+		tokens = " ".join(tokens)
+		data_tuple = (data[0], tokens)
+		return data_tuple
 
-		print('write function 2')
+
+	def create_tokens(self, retro=False):
+		""" tokenizes text and updates `tokens` column in DB, retro=True updates existing tokens, False only new tokens """
+		start = time.time()
+
+		if retro == True:
+			tokens_objects = self.DB.get_all_JobListings_descriptions()
+		else:
+			tokens_objects = self.DB.get_new_JobListings_descriptions()
+
+		token_tuple_list = [self.tokenizer(token_id_tuple) for token_id_tuple in tokens_objects]
+
+
+		logger.info('tokenized {} strings in {} seconds'.format(len(token_tuple_list), (time.time() - start)))
+		print(token_tuple_list)
+		
+
+
+
+
 
 ### Function to retrain KNN model
 
