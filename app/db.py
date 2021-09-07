@@ -2,7 +2,7 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
 import json, os
-from typing import Tuple, List, Dict
+from typing import Tuple, List, Dict, String
 
 from sqlalchemy import create_engine, select, insert, update, func, inspect, and_
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -66,21 +66,41 @@ class Database(object):
 				session.commit()
 
 
+
+	def update_JobListings(self, data: List[Tuple]):
+		""" Updates Joblistings with data where id == id """
+		with self.Sessionmaker() as session:
+
+			for datum in data:
+				query = (
+					update(JobListings).
+					where(JobListings.id == datum[0]).
+					values(**datum)
+				)
+				session.execute(query)
+				session.commit()
+
+
+
 	def get_all_JobListings(self):
 		""" SELECT * FROM job_listings """
 		with self.Sessionmaker() as session:
-			query = (select(JobListings))
+			query = (
+				select(JobListings)
+			)
 			data = session.execute(query).fetchall()
 
 		return data
 
 
 
-	def get_after_date_JobListings(self, date):
+	def get_after_date_JobListings(self, date: String):   # Maybe this should be a datetime?
 		""" SELECT * FROM job_listings WHERE date > input """
 		with self.Sessionmaker() as session:
-			query = (select(JobListings).
-				where(JobListings.date >= date))
+			query = (
+				select(JobListings).
+				where(JobListings.date >= date)
+			)
 			data = session.execute(query).fetchall()
 
 		return data
@@ -89,7 +109,9 @@ class Database(object):
 	def get_JobListings_hashes(self):
 		""" SELECT link FROM job_listings """
 		with self.Sessionmaker() as session:
-			query = (select(JobListings.hashed))
+			query = (
+				select(JobListings.hashed)
+			)
 			data = session.execute(query).fetchall()
 
 		return data
@@ -98,7 +120,9 @@ class Database(object):
 	def get_all_JobListings_descriptions(self):
 		""" gets all `id`s and `descriptions` from JobListings """
 		with self.Sessionmaker() as session:
-			query = (select(JobListings.id, JobListings.description))
+			query = (
+				select(JobListings.id, JobListings.description)
+			)
 			data = session.execute(query).fetchall()
 
 		return data
@@ -107,8 +131,10 @@ class Database(object):
 	def get_new_JobListings_descriptions(self):
 		""" gets new `id`s and `descriptions` from JobListings """
 		with self.Sessionmaker() as session:
-			query = (select(JobListings.id, JobListings.description).
-				where(JobListings.tokens == None))
+			query = (
+				select(JobListings.id, JobListings.description).
+				where(JobListings.tokens == None)
+			)
 			data = session.execute(query).fetchall()
 
 		return data

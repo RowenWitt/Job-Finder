@@ -32,6 +32,7 @@ class search:
 		return data_tuple
 
 
+
 	def create_tokens(self, retro=False):
 		""" tokenizes text and updates `tokens` column in DB, retro=True updates existing tokens, False only new tokens """
 		start = time.time()
@@ -45,8 +46,19 @@ class search:
 
 
 		logger.info('tokenized {} strings in {} seconds'.format(len(token_tuple_list), (time.time() - start)))
-		print(token_tuple_list)
-		
+		return token_tuple_list
+
+
+
+	def update_tokens(self, retro=False):
+		""" Updates rows where id == id with new tokens """
+		start = time.time()
+
+		tokens = self.create_tokens(retro=retro)
+
+		self.DB.update_JobListings(tokens)
+
+		logger.info('updated {} rows in {} seconds'.format(len(tokens), (time.time() - start)))
 
 
 
