@@ -5,6 +5,11 @@ Employs rotating user agent and proxies to avoid RL
 - ChromeDriver version `93.0.4577.15`
 - Python version `3.9.0`
 
+- `alembic upgrade head`
+- `alembic revision --autogenerate -m "automigration"`
+- `alembic upgrade head`
+
+
 ## Known Defects
 
 - Rotating proxies is annoying because many proxies are very slow -- time to scrape one page went from ~10 seconds to ~90 seconds.  Using minimal proxy rotation, long term solve is to pay for better proxies or run a couple proxies through AWS (I'm not willing to put the money into this).
