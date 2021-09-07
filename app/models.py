@@ -21,10 +21,11 @@ class JobListings(Base):
 	date = Column(Date)
 	salary = Column(String(128))
 	description = Column(Text)
+	tokens = Column(Text)
 
 	def __repr__(self):
 		return (
-			"id:{}, company:{}, title:{}, location:{}, reviews:{}, link:{}, date:{}, salary:{}, description:{}").format(
+			"id:{}, company:{}, title:{}, location:{}, reviews:{}, link:{}, date:{}, salary:{}, description:{}, tokens:{}").format(
 			self.id,
 			self.company,
 			self.title,
@@ -33,4 +34,5 @@ class JobListings(Base):
 			self.link,
 			self.date,
 			self.salary,
-			self.description)
+			self.description,
+			self.tokens)

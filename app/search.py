@@ -9,7 +9,7 @@ class search:
 
 	def __init__(self):
 		self.DB = app.db.Database()
-		self.nlp = spacy.load('en_core_web_md')
+		self.nlp = spacy.load('en_core_web_sm')
 
 
 
