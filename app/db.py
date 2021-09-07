@@ -139,3 +139,16 @@ class Database(object):
 
 		return data
 
+
+
+	def get_all_JobListings_tokens(self):
+		""" Gets all tokens from JobListings """
+		with self.Sessionmaker() as session:
+			query = (
+				select(JobListings.id, JobListings.tokens).
+				order_by(JobListings.id)
+			)
+			data = session.execute(query).fetchall()
+
+		return data
+

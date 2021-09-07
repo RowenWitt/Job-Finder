@@ -4,6 +4,8 @@ from app.scraper import logger
 import time
 import spacy
 from bs4 import BeautifulSoup
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.neighbors import NearestNeighbors
 
 
 class search:
@@ -62,9 +64,48 @@ class search:
 
 
 
+	def tfidf_vectorize(self, data: List[str]):
+		""" Tfidf Vectorizes a list of string inputs """
+		self.tfidf_vect = TfidfVectorizer(stop_words='english')
+		self.tfidf_vect.fit(data)  # I think a list of strings will be acceptable
+		vect_data = self.tfidf_vect.transform(data)
+
+		return vect_data
 
 
-### Function to retrain KNN model
+
+	def fit_nn(self, data: List[str]):
+		""" Retrain KNN model, accepts list of token-strings """
+		vect_data = self.tfidf_vectorize(data)
+		self.nn = NearestNeighbors(n_neighbors=10, algorithm='kd_tree')
+		self.nn.fit(vect_data)
+
+
+
+	def search_nn(self, seed):
+		""" Search NN model from vectorized seed """
+		seed_vect = self.tfidf_vectorize([seed])[0]
+		neigh_dist, neigh_index = self.nn.kneighbors(seed_vect)
+
+
+
+	def gen_search_context(self):
+		""" runs through flow to generate a search context """
+		data = self.DB.get_all_JobListings_tokens
+		tokens = [token[1] for token in data]
+
+		print(tokens)
+
+		self.fit_nn(tokens)
+
+
+
+
+
+
+
+
+
 
 
 
@@ -94,9 +135,7 @@ class search:
 
 
 	### HIGH PRIORITY ###
-## Need to fix text representations, easily could do it here, then update DB
-## Probably is a better call to fix text before initial input, only doing it after because I was worried it would take a while
-
+## Automate model saving and loading upon retraining
 
 	### LOW PRIORITY ###
 ## Fix data input (salary, location, reviews)
