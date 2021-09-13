@@ -1,5 +1,5 @@
 # Job-Finder
-Scraper, ETL Pipeline, API for getting jobs from Indeed
+Scraper, ETL Pipeline, API for getting jobs from Indeed.  Vectorizer & KNN to search.
 Employs rotating user agent and proxies to avoid RL
 
 - ChromeDriver version `93.0.4577.15`
